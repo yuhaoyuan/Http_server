@@ -1,0 +1,14 @@
+# github.com/go-redis/redis v6.15.7+incompatible
+github.com/go-redis/redis
+github.com/go-redis/redis/internal
+github.com/go-redis/redis/internal/consistenthash
+github.com/go-redis/redis/internal/hashtag
+github.com/go-redis/redis/internal/pool
+github.com/go-redis/redis/internal/proto
+github.com/go-redis/redis/internal/util
+# github.com/go-sql-driver/mysql v1.5.0
+github.com/go-sql-driver/mysql
+# github.com/yuhaoyuan/RPC_server v0.0.0-20200229082559-6f270dfe202e
+github.com/yuhaoyuan/RPC_server/corn
+github.com/yuhaoyuan/RPC_server/dal
+github.com/yuhaoyuan/RPC_server/config

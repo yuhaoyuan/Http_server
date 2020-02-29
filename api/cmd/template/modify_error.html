@@ -2,9 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>修改失败</title>
 </head>
 <body>
 
+<form method="post">
+    <input type="text" name="user_name" style="display:none;" value="%s" required id="myinput" readonly>
+    <input type="text" name="user_pwd" style="display:none;" value="%s" required id="myinput" readonly>
+    失败原因：<input type="text" name="err_msg" value="%s" readonly><br/></br>
+<input type="submit" value="修改失败，点击返回" formaction="login"/>
+
+</form>
 </body>
 </html>

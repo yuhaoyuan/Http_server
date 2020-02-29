@@ -18,6 +18,8 @@ func (t *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		t.Login(w, r)
 	case "/register":
 		t.Register(w, r)
+	case "/register_upload":
+		t.RegisterUpload(w, r)
 	case "/modify":
 		t.Modify(w, r)
 	default:
@@ -35,6 +37,10 @@ func (t *Router) Login(w http.ResponseWriter, r *http.Request){
 
 func (t *Router) Register(w http.ResponseWriter, r *http.Request) {
 	HandRegister(w, r)
+}
+
+func (t *Router) RegisterUpload(w http.ResponseWriter, r *http.Request) {
+	HandRegisterUpload(w, r)
 }
 
 func (t *Router) Modify(w http.ResponseWriter, r *http.Request) {
