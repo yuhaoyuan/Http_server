@@ -12,9 +12,12 @@
 <form method="post">
     用户名：<input type="text" name="user_name" placeholder="请输入用户名" pattern="[A-Za-z]{1,15}"  required id="myinput">(只能包含大小写英文字母且长度不超过15)<br/></br>
     密码:<input type="text" name="user_pwd" placeholder="请输入密码" pattern="^[a-zA-Z]\w{5,17}$"  required id="myinput">(只能包含英文、数字和下划线，至少6位，不超过17位</br></br>
+    <input type="text" name="token" style="display:none;" value="" required id="myinput" readonly>
     <input type="submit" value="登录" formaction="login"/>
-    <input type="submit" value="注册" formaction="register"/>
+</form>
 
+<form method="post">
+    <input type="submit" value="注册" formaction="register"/>
 </form>
 </body>
 

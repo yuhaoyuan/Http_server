@@ -28,7 +28,7 @@ func (t *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (t *Router) Home(w http.ResponseWriter, r *http.Request) {
-	HandHome(w)
+	HandHome(w, r)
 }
 
 func (t *Router) Login(w http.ResponseWriter, r *http.Request){

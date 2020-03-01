@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/yuhaoyuan/Http_server/api/auth"
 	"github.com/yuhaoyuan/Http_server/util"
+	"github.com/yuhaoyuan/RPC_server/dal"
 	RpcProto "github.com/yuhaoyuan/RPC_server/proto"
 	"io"
 	"log"
@@ -11,9 +13,16 @@ import (
 	"time"
 )
 
-func HandHome(w http.ResponseWriter) {
-	ret, _ := fmt.Fprintf(w, "%s", HtmlInfoMp["home"])
-	fmt.Println("call home ", ret)
+func HandHome(w http.ResponseWriter, r *http.Request) {
+	token, _ := auth.FromRequest(r)
+	log.Println(token)
+	if token == "" {    // 没有token
+		_, _ = fmt.Fprintf(w, "%s", HtmlInfoMp["home"])
+	}
+
+	// 通过RPC接口 校验token
+
+
 }
 
 func HandLogin(w http.ResponseWriter, r *http.Request) {
@@ -26,24 +35,33 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	user :=	r.Form["user_name"][0]
+	userName :=	r.Form["user_name"][0]
 	passwd := r.Form["user_pwd"][0]
-
-	//log.Println("user = ", user)
-	//log.Println("passwd = ", passwd)
-
-	// 调用 RPC server
-	var loginRequest = RpcProto.LoginRequest
-	rpcClient.Call("userLogin", &loginRequest)
-	rsp, err := loginRequest(user, passwd)  // 发送请求
-	if err != nil{
-		log.Println(err)
+	token := r.Form["token"][0]
+	if token != "" {  // 如果有token,校验token
+		var checkTokenRequest = RpcProto.CheckTokenRequest
+		rpcClient.Call("CheckToken", &checkTokenRequest)
+		tokenInfo, _ := checkTokenRequest(userName, token)   // 发送请求
+		if tokenInfo == (dal.UserInfo{}){
+			_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["home"]), "token 过期，请重新登陆"))
+			return
+		}
+		// 返回数据给h5
+		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), tokenInfo.Name, tokenInfo.Token, tokenInfo.NickName, tokenInfo.Picture))
+		return
+	} else {   // 如果没有，校验密码、获得token
+		// 调用 RPC server
+		var loginRequest= RpcProto.LoginRequest
+		rpcClient.Call("userLogin", &loginRequest)
+		rsp, err := loginRequest(userName, passwd) // 发送请求
+		if err != nil {
+			log.Println(err)
+		}
+		log.Println(rsp)
+		log.Println(len(rsp.Token))
+		// 返回数据给h5
+		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), rsp.Name, rsp.Token, rsp.NickName, rsp.Picture))
 	}
-	log.Println(rsp)
-
-	// 返回数据给h5
-	_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), rsp.Name, rsp.Pwd, rsp.NickName, rsp.Picture))
-
 	log.Println("handle Login done! ")
 }
 
@@ -67,7 +85,7 @@ func HandRegisterUpload(w http.ResponseWriter, r *http.Request) {
 
 	// 调用 RPC server
 	var registerRequest = RpcProto.RegisterRequest
-	rpcClient.Call("userLogin", &registerRequest)
+	rpcClient.Call("userRegister", &registerRequest)
 	rsp, err := registerRequest(user, passwd)  // 发送请求
 	if err != nil{
 		log.Println(err)
@@ -75,7 +93,7 @@ func HandRegisterUpload(w http.ResponseWriter, r *http.Request) {
 	log.Println(rsp)
 
 	// 返回数据给h5
-	_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), rsp.Name, rsp.Pwd, rsp.NickName, rsp.Picture))
+	_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), rsp.Name, rsp.Token, rsp.NickName, rsp.Picture))
 }
 
 func HandModify(w http.ResponseWriter, r *http.Request){
@@ -83,6 +101,9 @@ func HandModify(w http.ResponseWriter, r *http.Request){
 		http.Error(w, "the method is not allowed！", http.StatusMethodNotAllowed)
 		return
 	}
+	//token, _ := auth.FromRequest(r)
+	//log.Println(token)
+
 	// ------------获得用户修改的资料信息--------------
 	err := r.ParseForm()
 	imgFile, _, imgErr := r.FormFile("imgfile")
@@ -91,7 +112,8 @@ func HandModify(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	userName :=	r.Form["user_name"][0]
-	passwd := r.Form["user_pwd"][0]
+	token := r.Form["token"][0]
+	log.Println(len(token))
 	nickName := r.Form["nick_name"][0]
 
 	pictureCdnUrl := ""  // 为空则代表没有更换头像
@@ -116,16 +138,23 @@ func HandModify(w http.ResponseWriter, r *http.Request){
 	}
 
 	// ------------call rpc------------
+	var checkTokenRequest = RpcProto.CheckTokenRequest
+	rpcClient.Call("CheckToken", &checkTokenRequest)
+	tokenInfo, err := checkTokenRequest(userName, token)   // 发送请求
+	if tokenInfo == (dal.UserInfo{}){
+		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["home"]), "token 过期，请重新登陆"))
+		return
+	}
 	var modifyRequest = RpcProto.ModifyInfoRequest
 	rpcClient.Call("UserModifyInfo", &modifyRequest)
-	_, err = modifyRequest(userName, passwd, nickName, pictureCdnUrl)   // 发送请求
+	_, err = modifyRequest(userName, tokenInfo.Pwd, nickName, pictureCdnUrl)   // 发送请求
 	if err != nil{
 		log.Println(err)
 		// 返回数据给h5
 		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["modify_error"]), err))
 	} else{
 		// 返回数据给h5
-		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["modify_success"]), userName, passwd))
+		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["modify_success"]), userName, tokenInfo.Token))
 	}
 	log.Println("handle Login done! ")
 }
