@@ -15,14 +15,9 @@ import (
 
 func HandHome(w http.ResponseWriter, r *http.Request) {
 	token, _ := auth.FromRequest(r)
-	log.Println(token)
 	if token == "" {    // 没有token
 		_, _ = fmt.Fprintf(w, "%s", HtmlInfoMp["home"])
 	}
-
-	// 通过RPC接口 校验token
-
-
 }
 
 func HandLogin(w http.ResponseWriter, r *http.Request) {
@@ -55,10 +50,8 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 		rpcClient.Call("userLogin", &loginRequest)
 		rsp, err := loginRequest(userName, passwd) // 发送请求
 		if err != nil {
-			log.Println(err)
+			log.Println("HandLogin - loginRequest error = ", err)
 		}
-		log.Println(rsp)
-		log.Println(len(rsp.Token))
 		// 返回数据给h5
 		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), rsp.Name, rsp.Token, rsp.NickName, rsp.Picture))
 	}
@@ -88,9 +81,8 @@ func HandRegisterUpload(w http.ResponseWriter, r *http.Request) {
 	rpcClient.Call("userRegister", &registerRequest)
 	rsp, err := registerRequest(user, passwd)  // 发送请求
 	if err != nil{
-		log.Println(err)
+		log.Println("HandRegisterUpload - registerRequest error = ", err)
 	}
-	log.Println(rsp)
 
 	// 返回数据给h5
 	_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), rsp.Name, rsp.Token, rsp.NickName, rsp.Picture))
@@ -102,18 +94,16 @@ func HandModify(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	//token, _ := auth.FromRequest(r)
-	//log.Println(token)
 
 	// ------------获得用户修改的资料信息--------------
 	err := r.ParseForm()
 	imgFile, _, imgErr := r.FormFile("imgfile")
 	if imgErr != nil && imgErr != http.ErrMissingFile{
-		log.Println(imgErr.Error())
+		log.Println("HandModify - FormFile(imgfile) error = ", imgErr.Error())
 		return
 	}
 	userName :=	r.Form["user_name"][0]
 	token := r.Form["token"][0]
-	log.Println(len(token))
 	nickName := r.Form["nick_name"][0]
 
 	pictureCdnUrl := ""  // 为空则代表没有更换头像
@@ -123,8 +113,7 @@ func HandModify(w http.ResponseWriter, r *http.Request){
 		filePath := fmt.Sprintf("/tmp/%s", fileName)
 		out, err := os.Create(filePath)
 		if err != nil {
-			log.Println(err)
-			_, _ = fmt.Fprintf(w, "Failed to open the file for writing")
+			log.Println("HandModify -Failed to open the file for writing")
 			return
 		}
 		_, err = io.Copy(out, imgFile)
@@ -149,7 +138,7 @@ func HandModify(w http.ResponseWriter, r *http.Request){
 	rpcClient.Call("UserModifyInfo", &modifyRequest)
 	_, err = modifyRequest(userName, tokenInfo.Pwd, nickName, pictureCdnUrl)   // 发送请求
 	if err != nil{
-		log.Println(err)
+		log.Println("HandModify -modifyRequest err = ", err)
 		// 返回数据给h5
 		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["modify_error"]), err))
 	} else{

@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"github.com/yuhaoyuan/Http_server/config"
+	"github.com/yuhaoyuan/Http_server/yhylog"
 	"github.com/yuhaoyuan/RPC_server/dal"
 	"io/ioutil"
 	"net"
@@ -31,6 +32,7 @@ func init() {
 
 	config.BaseConfInit()
 	RpcInit()
+	yhylog.LogInit(config.BaseConf.LogName)
 }
 
 var (

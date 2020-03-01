@@ -10,6 +10,7 @@ type BaseConfig struct {
 	SecretKEY string
 	Bucket    string
 	CdnUrl string
+	LogName string
 }
 
 func BaseConfInit() {
@@ -18,4 +19,5 @@ func BaseConfInit() {
 	BaseConf.SecretKEY = os.Getenv("SECRETKEY")
 	BaseConf.Bucket = os.Getenv("BUCKET")
 	BaseConf.CdnUrl = os.Getenv("CDNURL")
+	BaseConf.LogName = os.Getenv("HSLOGNAME")
 }
