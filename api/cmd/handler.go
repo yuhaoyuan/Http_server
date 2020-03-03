@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/yuhaoyuan/Http_server/api/auth"
+	"github.com/yuhaoyuan/Http_server/rpc"
 	"github.com/yuhaoyuan/Http_server/util"
 	"github.com/yuhaoyuan/RPC_server/dal"
-	RpcProto "github.com/yuhaoyuan/RPC_server/proto"
 	"io"
 	"log"
 	"net/http"
@@ -33,21 +33,37 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 	userName :=	r.Form["user_name"][0]
 	passwd := r.Form["user_pwd"][0]
 	token := r.Form["token"][0]
+	log.Println("in HandLogin--------------------userName=", userName)
+	/*
+	 todo:搞明白临界点是多少.
+	*/
+	rpc.Mut.Lock()
+
+	log.Println("in HandLogin--------------------getrpc-client-lock")
+	defer rpc.Mut.Unlock()
+	rpcClient := rpc.GetSingleton()
+
+	log.Println("in HandLogin--------------------getrpc-client-done!")
 	if token != "" {  // 如果有token,校验token
-		var checkTokenRequest = RpcProto.CheckTokenRequest
-		rpcClient.Call("CheckToken", &checkTokenRequest)
-		tokenInfo, _ := checkTokenRequest(userName, token)   // 发送请求
+		//var checkTokenRequest = RpcProto.CheckTokenRequest  !!!!!!!!!这么用的话 = 并发的请求共用一个request = gg!!!!!!!
+		var checkTokenRequest func(userName, token string) (dal.UserInfo, error)
+		newReq := checkTokenRequest
+		rpcClient.Call("CheckToken", &newReq)
+		tokenInfo, _ := newReq(userName, token)   // 发送请求 ---------------------- 瓶颈之一， 有一个请求拿到锁之后卡在这里的话，后面的都会gg----------
 		if tokenInfo == (dal.UserInfo{}){
 			_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["home"]), "token 过期，请重新登陆"))
 			return
 		}
+
+		// debug 一下
+		log.Printf("--------check bug--------- req-name=%s, rsp-name=%s", userName, tokenInfo.Name)
 		// 返回数据给h5
 		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), tokenInfo.Name, tokenInfo.Token, tokenInfo.NickName, tokenInfo.Picture))
-		return
 	} else {   // 如果没有，校验密码、获得token
 		// 调用 RPC server
-		var loginRequest= RpcProto.LoginRequest
-		rpcClient.Call("userLogin", &loginRequest)
+		//var loginRequest= RpcProto.LoginRequest
+		var loginRequest func(string, string) (dal.UserInfo, error)
+			rpcClient.Call("userLogin", &loginRequest)
 		rsp, err := loginRequest(userName, passwd) // 发送请求
 		if err != nil {
 			log.Println("HandLogin - loginRequest error = ", err)
@@ -77,7 +93,11 @@ func HandRegisterUpload(w http.ResponseWriter, r *http.Request) {
 	passwd := r.Form["user_pwd"][0]
 
 	// 调用 RPC server
-	var registerRequest = RpcProto.RegisterRequest
+	//rpcClient:= rpc.RpcInit() // 记得在用完之后关闭连接
+	rpcClient := rpc.GetSingleton() // 并发起来，为什么会直接跳过呢？
+
+	//var registerRequest = RpcProto.RegisterRequest
+	var registerRequest func(userName string, pwd string) (dal.UserInfo, error)
 	rpcClient.Call("userRegister", &registerRequest)
 	rsp, err := registerRequest(user, passwd)  // 发送请求
 	if err != nil{
@@ -86,6 +106,7 @@ func HandRegisterUpload(w http.ResponseWriter, r *http.Request) {
 
 	// 返回数据给h5
 	_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), rsp.Name, rsp.Token, rsp.NickName, rsp.Picture))
+	//rpcClient.Close()
 }
 
 func HandModify(w http.ResponseWriter, r *http.Request){
@@ -127,14 +148,19 @@ func HandModify(w http.ResponseWriter, r *http.Request){
 	}
 
 	// ------------call rpc------------
-	var checkTokenRequest = RpcProto.CheckTokenRequest
+	//rpcClient:= rpc.RpcInit() // 记得在用完之后关闭连接
+	rpcClient := rpc.GetSingleton()
+
+	var checkTokenRequest func(userName, token string) (dal.UserInfo, error)
 	rpcClient.Call("CheckToken", &checkTokenRequest)
 	tokenInfo, err := checkTokenRequest(userName, token)   // 发送请求
 	if tokenInfo == (dal.UserInfo{}){
 		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["home"]), "token 过期，请重新登陆"))
+		//rpcClient.Close()
 		return
 	}
-	var modifyRequest = RpcProto.ModifyInfoRequest
+	//var modifyRequest = RpcProto.ModifyInfoRequest
+	var modifyRequest func(userName, pwd, nickName, picture string) (dal.UserInfo, error)
 	rpcClient.Call("UserModifyInfo", &modifyRequest)
 	_, err = modifyRequest(userName, tokenInfo.Pwd, nickName, pictureCdnUrl)   // 发送请求
 	if err != nil{

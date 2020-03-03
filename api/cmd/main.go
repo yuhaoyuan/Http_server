@@ -7,6 +7,7 @@ import (
 	"github.com/yuhaoyuan/Http_server/yhylog"
 	"github.com/yuhaoyuan/RPC_server/dal"
 	"io/ioutil"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -31,8 +32,8 @@ func init() {
 
 
 	config.BaseConfInit()
-	RpcInit()
 	yhylog.LogInit(config.BaseConf.LogName)
+	//rpc.InitRpc()
 }
 
 var (
@@ -66,10 +67,10 @@ func main(){
 	router := &Router{}                    // todo 想一下这个如果不是指针呢?
 	ln, err := net.Listen("tcp", ":8001") // todo：想一下这里支持的最大并发数是多少
 	if err != nil{
-		fmt.Println("Listen failed！")
+		log.Println("Listen failed！")
 	}
 	err2 := http.Serve(ln, router)
 	if err2 != nil{
-		fmt.Printf("Serve failed")
+		log.Printf("Serve failed")
 	}
 }
