@@ -13,23 +13,18 @@ import (
 	"os"
 )
 
-
 func init() {
-	nowPath, err := os.Getwd()
-	if err != nil {
-		panic("get nowPath failed!")
-	}
-	loadHtml("login_error", nowPath + "/api/cmd/template/login_error.html")
-	loadHtml("login_success", nowPath + "/api/cmd/template/login_success.html")
-	loadHtml("home", nowPath + "/api/cmd/template/home.html")
-	loadHtml("modify_error", nowPath + "/api/cmd/template/modify_error.html")
-	loadHtml("modify_success", nowPath + "/api/cmd/template/modify_success.html")
+	//nowPath, err := os.Getwd()
+	//if err != nil {
+	//	panic("get nowPath failed!")
+	//}
+	loadHtml("login_error", "/Users/yuhaoyuan/work/Http_server/template/login_error.html")
+	loadHtml("login_success", "/Users/yuhaoyuan/work/Http_server/template/login_success.html")
+	loadHtml("home", "/Users/yuhaoyuan/work/Http_server/template/home.html")
+	loadHtml("modify_error", "/Users/yuhaoyuan/work/Http_server/template/modify_error.html")
+	loadHtml("modify_success", "/Users/yuhaoyuan/work/Http_server/template/modify_success.html")
 
-	loadHtml("register", nowPath + "/api/cmd/template/register.html")
-	//loadHtml("err", "/home/guaniu/code/src/http/err.html")
-	//loadHtml("reg", "/home/guaniu/code/src/http/reg.html")
-	//loadHtml("errtwo", "/home/guaniu/code/src/http/errtwo.html")
-
+	loadHtml("register", "/Users/yuhaoyuan/work/Http_server/template/register.html")
 
 	config.BaseConfInit()
 	yhylog.LogInit(config.BaseConf.LogName)
@@ -61,16 +56,16 @@ func readFile(fileName string) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-func main(){
+func main() {
 	gob.Register(dal.UserInfo{})
 
-	router := &Router{}                    // todo 想一下这个如果不是指针呢?
+	router := &Router{}                   // todo 想一下这个如果不是指针呢?
 	ln, err := net.Listen("tcp", ":8001") // todo：想一下这里支持的最大并发数是多少
-	if err != nil{
+	if err != nil {
 		log.Println("Listen failed！")
 	}
 	err2 := http.Serve(ln, router)
-	if err2 != nil{
+	if err2 != nil {
 		log.Printf("Serve failed")
 	}
 }

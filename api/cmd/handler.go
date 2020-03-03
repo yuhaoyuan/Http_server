@@ -35,15 +35,16 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 	token := r.Form["token"][0]
 	log.Println("in HandLogin--------------------userName=", userName)
 	/*
-	 todo:搞明白临界点是多少.
+
 	*/
 	rpc.Mut.Lock()
 
-	log.Println("in HandLogin--------------------getrpc-client-lock")
+	log.Println("in HandLogin--------------------getrpc-client-lock---userName=", userName)
 	defer rpc.Mut.Unlock()
 	rpcClient := rpc.GetSingleton()
+	defer rpcClient.Close()
 
-	log.Println("in HandLogin--------------------getrpc-client-done!")
+	log.Println("in HandLogin--------------------getrpc-client-done----userName=", userName)
 	if token != "" {  // 如果有token,校验token
 		//var checkTokenRequest = RpcProto.CheckTokenRequest  !!!!!!!!!这么用的话 = 并发的请求共用一个request = gg!!!!!!!
 		var checkTokenRequest func(userName, token string) (dal.UserInfo, error)

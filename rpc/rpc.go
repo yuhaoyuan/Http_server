@@ -22,15 +22,14 @@ var Once sync.Once
 var Mut sync.Mutex
 
 func GetSingleton() *corn.Client {
-	Once.Do(func (){
-		SpecialRpcClient = SpecialRpcClientInit()
-	})
-	// 来个互斥锁
+	SpecialRpcClient = SpecialRpcClientInit()
+	//SpecialRpcClient.CheckConn()
 	return SpecialRpcClient
 }
 
 func SpecialRpcClientInit() *corn.Client {
-	conn, err := net.Dial("tcp", config.BaseConf.Addr)
+	d := net.Dialer{Timeout: time.Second*10}
+	conn, err := d.Dial("tcp", config.BaseConf.Addr)
 	if err != nil {
 		log.Printf("client-dial failed!, err = ", err)
 	}

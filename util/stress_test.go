@@ -30,7 +30,7 @@ func BenchmarkGetUserInfo(b *testing.B) {
 	fmt.Println("userList count = ", len(userNameList))
 	apiUrl := "http://127.0.0.1:8001/login"
 	wg := &sync.WaitGroup{}
-	for i := 0; i < 5; i++ {    // 200 个client(协程)
+	for i := 0; i < 1; i++ {    // 200 个client(协程)
 		wg.Add(1)
 		if i>0 {
 			time.Sleep(time.Second)
@@ -44,11 +44,11 @@ func BenchmarkGetUserInfo(b *testing.B) {
 			userName := userNameList[rand.Intn(L)]
 			data.Set("user_name", userName)
 
-			client := http.Client{Timeout:time.Second*10} //创建客户端， 是放在for循环里面还是外面呢
+			client := http.Client{Timeout:time.Minute*3} //创建客户端， 是放在for循环里面还是外面呢
 
-			for j:=0; j<100; j++ {    // 固定用户 发送1000次请求，一共20w的请求量，耗时可以在日志中看到
+			for j:=0; j<1000; j++ {    // 固定用户 发送1000次请求，一共20w的请求量，耗时可以在日志中看到
 				// 为了分解瞬时压力，发一个请求睡一会儿把
-				time.Sleep(time.Millisecond*10)
+				time.Sleep(time.Millisecond*100)
 
 				//request 一定要放在for循环里面，可能是Do方法会关闭 req 中的 Body 读取，因此同一个 req 再次传参给 Do 时，Body 的读方法已经关闭
 				request, err := http.NewRequest("POST", apiUrl, strings.NewReader(data.Encode()))
