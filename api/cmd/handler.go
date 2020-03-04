@@ -14,7 +14,7 @@ import (
 
 // HandHome home
 func HandHome(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintf(w, "%s", HtmlInfoMp["home"])
+	_, _ = fmt.Fprintf(w, "%s", HTMLInfoMp["home"])
 }
 
 // HandLogin login
@@ -50,14 +50,14 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 		rpcClient.Call("CheckToken", &newReq)
 		tokenInfo, _ := newReq(userName, token) // 发送请求 ---------------------- 瓶颈之一， 有一个请求拿到锁之后卡在这里的话，后面的都会gg----------
 		if tokenInfo == (dal.UserInfo{}) {
-			_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["home"]), "token 过期，请重新登陆"))
+			_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["home"]), "token 过期，请重新登陆"))
 			return
 		}
 
 		// debug 一下
 		log.Printf("--------check bug--------- req-name=%s, rsp-name=%s", userName, tokenInfo.Name)
 		// 返回数据给h5
-		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), tokenInfo.Name, tokenInfo.Token, tokenInfo.NickName, tokenInfo.Picture))
+		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["login_success"]), tokenInfo.Name, tokenInfo.Token, tokenInfo.NickName, tokenInfo.Picture))
 	} else { // 如果没有，校验密码、获得token
 		// 调用 RPC server
 		//var loginRequest= RpcProto.LoginRequest
@@ -68,14 +68,14 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 			log.Println("HandLogin - loginRequest error = ", err)
 		}
 		// 返回数据给h5
-		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), rsp.Name, rsp.Token, rsp.NickName, rsp.Picture))
+		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["login_success"]), rsp.Name, rsp.Token, rsp.NickName, rsp.Picture))
 	}
 	log.Println("handle Login done! ")
 }
 
 // HandRegister register
 func HandRegister(w http.ResponseWriter, r *http.Request) {
-	ret, _ := fmt.Fprintf(w, "%s", HtmlInfoMp["register"])
+	ret, _ := fmt.Fprintf(w, "%s", HTMLInfoMp["register"])
 	fmt.Println("call register ", ret)
 }
 
@@ -106,7 +106,7 @@ func HandRegisterUpload(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// 返回数据给h5
-	_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["login_success"]), rsp.Name, rsp.Token, rsp.NickName, rsp.Picture))
+	_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["login_success"]), rsp.Name, rsp.Token, rsp.NickName, rsp.Picture))
 	//rpcClient.Close()
 }
 
@@ -156,7 +156,7 @@ func HandModify(w http.ResponseWriter, r *http.Request) {
 	rpcClient.Call("CheckToken", &checkTokenRequest)
 	tokenInfo, err := checkTokenRequest(userName, token) // 发送请求
 	if tokenInfo == (dal.UserInfo{}) {
-		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["home"]), "token 过期，请重新登陆"))
+		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["home"]), "token 过期，请重新登陆"))
 		return
 	}
 	var modifyRequest func(userName, pwd, nickName, picture string) (dal.UserInfo, error)
@@ -165,10 +165,10 @@ func HandModify(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println("HandModify -modifyRequest err = ", err)
 		// 返回数据给h5
-		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["modify_error"]), err))
+		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["modify_error"]), err))
 	} else {
 		// 返回数据给h5
-		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HtmlInfoMp["modify_success"]), userName, tokenInfo.Token))
+		_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["modify_success"]), userName, tokenInfo.Token))
 	}
 	log.Println("handle Login done! ")
 }
