@@ -17,11 +17,7 @@ import (
 )
 
 var superToken = "ckQSpDXWcJVTWfFidRkh"
-/*
-压测之前有一个问题：
-MAC最大文件描述符限制，导致单个进程不能建立超过一定数目的链接。这个是否存在瓶颈需要观察
 
-*/
 func BenchmarkGetUserInfo(b *testing.B) {
 	//ASingleCall()
 

@@ -18,13 +18,13 @@ func init() {
 	//if err != nil {
 	//	panic("get nowPath failed!")
 	//}
-	loadHtml("login_error", "/Users/yuhaoyuan/work/Http_server/template/login_error.html")
-	loadHtml("login_success", "/Users/yuhaoyuan/work/Http_server/template/login_success.html")
-	loadHtml("home", "/Users/yuhaoyuan/work/Http_server/template/home.html")
-	loadHtml("modify_error", "/Users/yuhaoyuan/work/Http_server/template/modify_error.html")
-	loadHtml("modify_success", "/Users/yuhaoyuan/work/Http_server/template/modify_success.html")
+	loadHTML("login_error", "/Users/yuhaoyuan/work/Http_server/template/login_error.html")
+	loadHTML("login_success", "/Users/yuhaoyuan/work/Http_server/template/login_success.html")
+	loadHTML("home", "/Users/yuhaoyuan/work/Http_server/template/home.html")
+	loadHTML("modify_error", "/Users/yuhaoyuan/work/Http_server/template/modify_error.html")
+	loadHTML("modify_success", "/Users/yuhaoyuan/work/Http_server/template/modify_success.html")
 
-	loadHtml("register", "/Users/yuhaoyuan/work/Http_server/template/register.html")
+	loadHTML("register", "/Users/yuhaoyuan/work/Http_server/template/register.html")
 
 	config.BaseConfInit()
 	yhylog.LogInit(config.BaseConf.LogName)
@@ -32,19 +32,20 @@ func init() {
 }
 
 var (
-	HtmlInfoMp = make(map[string][]byte)
-	userMap    = make(map[string]string)
+	// HTMLInfoMp htmlmap
+	HTMLInfoMp = make(map[string][]byte)
 )
 
-func loadHtml(key, fileName string) {
+// loadHtml .
+func loadHTML(key, fileName string) {
 	info, err := readFile(fileName)
 	if err != nil {
 		fmt.Print(err)
 		return
 	}
-	HtmlInfoMp[key] = info
+	HTMLInfoMp[key] = info
 }
-
+// readFile .
 func readFile(fileName string) ([]byte, error) {
 	f, err := os.Open(fileName)
 	if f != nil {
@@ -59,7 +60,7 @@ func readFile(fileName string) ([]byte, error) {
 func main() {
 	gob.Register(dal.UserInfo{})
 
-	router := &Router{}                   // todo 想一下这个如果不是指针呢?
+	router := &Router{}
 	ln, err := net.Listen("tcp", ":8001") // todo：想一下这里支持的最大并发数是多少
 	if err != nil {
 		log.Println("Listen failed！")

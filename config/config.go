@@ -1,7 +1,9 @@
 package config
 
+// BaseConf 参数
 var BaseConf = BaseConfig{}
 
+// BaseConfig config 结构体
 type BaseConfig struct {
 	Addr      string
 	AccessKEY string
@@ -11,6 +13,7 @@ type BaseConfig struct {
 	LogName string
 }
 
+// BaseConfInit 初始化环境变量
 func BaseConfInit() {
 	//BaseConf.Addr = os.Getenv("ADDR")
 	//BaseConf.AccessKEY = os.Getenv("ACCESSKEY")
