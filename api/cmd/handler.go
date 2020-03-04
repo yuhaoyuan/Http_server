@@ -40,7 +40,6 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 	log.Println("in HandLogin--------------------getrpc-client-lock---userName=", userName)
 	defer rpc.Mut.Unlock()
 	rpcClient := rpc.GetSingleton()
-	defer rpcClient.Close()
 
 	log.Println("in HandLogin--------------------getrpc-client-done----userName=", userName)
 	if token != "" { // 如果有token,校验token
@@ -48,7 +47,12 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 		var checkTokenRequest func(userName, token string) (dal.UserInfo, error)
 		newReq := checkTokenRequest
 		rpcClient.Call("CheckToken", &newReq)
-		tokenInfo, _ := newReq(userName, token) // 发送请求 ---------------------- 瓶颈之一， 有一个请求拿到锁之后卡在这里的话，后面的都会gg----------
+		tokenInfo, err := newReq(userName, token) // 发送请求 ---------------------- 瓶颈之一， 有一个请求拿到锁之后卡在这里的话，后面的都会gg----------
+		if err != nil {
+			log.Println("newReq - err = ", err)
+			_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["home"]), err))
+			return
+		}
 		if tokenInfo == (dal.UserInfo{}) {
 			_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["home"]), "token 过期，请重新登陆"))
 			return

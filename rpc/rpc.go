@@ -7,7 +7,6 @@ import (
 	"net"
 
 	"sync"
-	"time"
 	//"reflect"
 )
 
@@ -19,20 +18,24 @@ var Mut sync.Mutex
 
 // GetSingleton 获得rpcClient
 func GetSingleton() *corn.Client {
-	specialRPCClient = SpecialRPClientInit()
-	specialRPCClient.CheckConn()
+	if specialRPCClient == nil {
+		SpecialRPClientInit()
+	}
+	connIsOk := specialRPCClient.CheckConn()
+	if !connIsOk {
+		SpecialRPClientInit()
+	}
 	return specialRPCClient
 }
 
 // SpecialRPClientInit RpcClient 构造方法
-func SpecialRPClientInit() *corn.Client {
-	d := net.Dialer{Timeout: time.Second * 10}
-	conn, err := d.Dial("tcp", config.BaseConf.Addr)
+func SpecialRPClientInit() {
+	conn, err := net.Dial("tcp", config.BaseConf.Addr)
 	if err != nil {
 		log.Printf("client-dial failed!, err = ", err)
 	}
 	log.Println("----------------make RpcClient------------------")
-	return corn.NewClient(conn)
+	specialRPCClient = corn.NewClient(conn)
 }
 
 //// 下面是客户端连接池的时候，  用来优化单例

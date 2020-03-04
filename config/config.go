@@ -26,5 +26,5 @@ func BaseConfInit() {
 	BaseConf.SecretKEY = "qAiFkbYFUEkiaIJjZawLvfaIp2K3P-CbpzcNLkKo"
 	BaseConf.Bucket = "yuhaoyuan"
 	BaseConf.CdnUrl = "http://q6gy4v9f7.bkt.clouddn.com/"
-	BaseConf.LogName = "yhy_http_server_log"
+	BaseConf.LogName = "yhy_http_server_log.log"
 }

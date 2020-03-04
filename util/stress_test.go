@@ -37,23 +37,23 @@ func BenchmarkGetUserInfo(b *testing.B) {
 			data.Set("user_pwd", "")
 			data.Set("token", "ckQSpDXWcJVTWfFidRkh")
 			L := len(userNameList)
+			rand.Seed(time.Now().UnixNano())
 			userName := userNameList[rand.Intn(L)]
+			fmt.Println("user-name = ", userName)
 			data.Set("user_name", userName)
 
 			client := http.Client{Timeout:time.Minute*3} //创建客户端， 是放在for循环里面还是外面呢
+			//request 一定要放在for循环里面，可能是Do方法会关闭 req 中的 Body 读取，因此同一个 req 再次传参给 Do 时，Body 的读方法已经关闭
+			request, err := http.NewRequest("POST", apiUrl, strings.NewReader(data.Encode()))
+			if err != nil {
+				fmt.Printf("http.NewRequest%v", err)
+			}
+			request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+			request.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
-			for j:=0; j<1000; j++ {    // 固定用户 发送1000次请求，一共20w的请求量，耗时可以在日志中看到
+			for j:=0; j<100; j++ {    // 固定用户 发送1000次请求，一共20w的请求量，耗时可以在日志中看到
 				// 为了分解瞬时压力，发一个请求睡一会儿把
 				time.Sleep(time.Millisecond*100)
-
-				//request 一定要放在for循环里面，可能是Do方法会关闭 req 中的 Body 读取，因此同一个 req 再次传参给 Do 时，Body 的读方法已经关闭
-				request, err := http.NewRequest("POST", apiUrl, strings.NewReader(data.Encode()))
-				if err != nil {
-					fmt.Printf("http.NewRequest%v", err)
-				}
-				request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-				request.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
-
 
 				bT := time.Now()
 				resp, err := client.Do(request) //发送请求

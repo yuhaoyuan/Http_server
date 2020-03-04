@@ -28,7 +28,7 @@ func init() {
 
 	config.BaseConfInit()
 	yhylog.LogInit(config.BaseConf.LogName)
-	//rpc.InitRpc()
+	//rpc.SpecialRPClientInit()
 }
 
 var (
