@@ -6,9 +6,23 @@ github.com/go-redis/redis/internal/hashtag
 github.com/go-redis/redis/internal/pool
 github.com/go-redis/redis/internal/proto
 github.com/go-redis/redis/internal/util
-# github.com/go-sql-driver/mysql v1.5.0
-github.com/go-sql-driver/mysql
-# github.com/yuhaoyuan/RPC_server v0.0.0-20200229082559-6f270dfe202e
-github.com/yuhaoyuan/RPC_server/corn
+# github.com/qiniu/api.v7 v7.2.5+incompatible
+github.com/qiniu/api.v7/auth/qbox
+github.com/qiniu/api.v7/storage
+github.com/qiniu/api.v7/conf
+# github.com/qiniu/x v7.0.8+incompatible
+github.com/qiniu/x/bytes.v7/seekable
+github.com/qiniu/x/bytes.v7
+github.com/qiniu/x/reqid.v7
+github.com/qiniu/x/xlog.v7
+# github.com/yuhaoyuan/RPC_server v0.0.0-20200304161756-1cfa2810385b
 github.com/yuhaoyuan/RPC_server/dal
+github.com/yuhaoyuan/RPC_server/corn
 github.com/yuhaoyuan/RPC_server/config
+github.com/yuhaoyuan/RPC_server/auth
+# golang.org/x/net v0.0.0-20180906233101-161cd47e91fd
+golang.org/x/net/context
+# qiniupkg.com/x v7.0.8+incompatible
+qiniupkg.com/x/bytes.v7
+qiniupkg.com/x/log.v7
+qiniupkg.com/x/reqid.v7

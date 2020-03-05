@@ -51,7 +51,7 @@ func BenchmarkGetUserInfo(b *testing.B) {
 			request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 			request.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
 
-			for j:=0; j<100; j++ {    // 固定用户 发送1000次请求，一共20w的请求量，耗时可以在日志中看到
+			for j:=0; j<1; j++ {    // 固定用户 发送1000次请求，一共20w的请求量，耗时可以在日志中看到
 				// 为了分解瞬时压力，发一个请求睡一会儿把
 				time.Sleep(time.Millisecond*100)
 

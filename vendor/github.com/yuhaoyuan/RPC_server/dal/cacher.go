@@ -9,12 +9,14 @@ import (
 	"time"
 )
 
+// RedisDb redis连接
 var RedisDb *redis.Client
 
 const (
 	userInfoKey = "user_info_key_%s"
 )
 
+// CacherInit 初始化redis
 func CacherInit() {
 	RedisDb = redis.NewClient(&redis.Options{
 		Addr:     config.BaseConf.RedisAddr,
@@ -23,6 +25,7 @@ func CacherInit() {
 	})
 }
 
+// checkCacherDB redis连接检查
 func checkCacherDB(Db *redis.Client) error {
 	err := Db.Ping().Err()
 	if err != nil {
@@ -33,27 +36,28 @@ func checkCacherDB(Db *redis.Client) error {
 	return nil
 }
 
+// CacherGetUserInfo get user info
 func CacherGetUserInfo(userName string, db *redis.Client) (UserInfo, error) {
-	if checkErr := checkCacherDB(db); checkErr!= nil {
+	if checkErr := checkCacherDB(db); checkErr != nil {
 		return UserInfo{}, checkErr
 	}
 	rKey := fmt.Sprintf(userInfoKey, userName)
 	userInfoString := db.Get(rKey).Val()
 	if userInfoString == "" {
 		return UserInfo{}, nil
-	} else {
-		var rs UserInfo
-		err := json.Unmarshal([]byte(userInfoString), &rs)
-		if err != nil {
-			log.Printf(fmt.Sprintf("CacherGetUserInfo-Unmarshal failed!, err = %s", err))
-			return rs, err
-		}
-		return rs, nil
 	}
+	var rs UserInfo
+	err := json.Unmarshal([]byte(userInfoString), &rs)
+	if err != nil {
+		log.Printf(fmt.Sprintf("CacherGetUserInfo-Unmarshal failed!, err = %s", err))
+		return rs, err
+	}
+	return rs, nil
 }
 
+// CacherSetUserInfo ser user info
 func CacherSetUserInfo(userinfo UserInfo, db *redis.Client) error {
-	if checkErr := checkCacherDB(db); checkErr!= nil {
+	if checkErr := checkCacherDB(db); checkErr != nil {
 		return checkErr
 	}
 	rKey := fmt.Sprintf(userInfoKey, userinfo.Name)
@@ -65,6 +69,20 @@ func CacherSetUserInfo(userinfo UserInfo, db *redis.Client) error {
 	err = db.Set(rKey, userInfoString, time.Minute*30).Err()
 	if err != nil {
 		log.Printf(fmt.Sprintf("CacherSetUserInfo-Set failed!, err = %s", err))
+		return err
+	}
+	return nil
+}
+
+// CacherDelUserInfo del user info
+func CacherDelUserInfo(userName string, db *redis.Client) error {
+	if checkErr := checkCacherDB(db); checkErr != nil {
+		return checkErr
+	}
+	rKey := fmt.Sprintf(userInfoKey, userName)
+	err := db.Del(rKey).Err()
+	if err != nil {
+		log.Printf(fmt.Sprintf("CacherDelUserInfo-Set failed!, err = %s", err))
 		return err
 	}
 	return nil

@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"fmt"
 	"github.com/yuhaoyuan/Http_server/config"
+	"github.com/yuhaoyuan/Http_server/rpc"
 	"github.com/yuhaoyuan/Http_server/yhylog"
 	"github.com/yuhaoyuan/RPC_server/dal"
 	"io/ioutil"
@@ -28,7 +29,7 @@ func init() {
 
 	config.BaseConfInit()
 	yhylog.LogInit(config.BaseConf.LogName)
-	//rpc.SpecialRPClientInit()
+	rpc.SpecialRPClientInit()
 }
 
 var (
@@ -67,6 +68,6 @@ func main() {
 	}
 	err2 := http.Serve(ln, router)
 	if err2 != nil {
-		log.Printf("Serve failed")
+		log.Println("Serve failed err = ", err2)
 	}
 }

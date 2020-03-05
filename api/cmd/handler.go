@@ -36,10 +36,10 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 
 	 */
 	rpc.Mut.Lock()
-
-	log.Println("in HandLogin--------------------getrpc-client-lock---userName=", userName)
+	log.Println("in HandLogin--getrpc-client-lock")
 	defer rpc.Mut.Unlock()
 	rpcClient := rpc.GetSingleton()
+	//rpcClient := rpc.GetNewClient()
 
 	log.Println("in HandLogin--------------------getrpc-client-done----userName=", userName)
 	if token != "" { // 如果有token,校验token
@@ -47,7 +47,7 @@ func HandLogin(w http.ResponseWriter, r *http.Request) {
 		var checkTokenRequest func(userName, token string) (dal.UserInfo, error)
 		newReq := checkTokenRequest
 		rpcClient.Call("CheckToken", &newReq)
-		tokenInfo, err := newReq(userName, token) // 发送请求 ---------------------- 瓶颈之一， 有一个请求拿到锁之后卡在这里的话，后面的都会gg----------
+		tokenInfo, err := newReq(userName, token) // 发送请求 --有一个请求拿到锁之后卡在这里的话，后面的都会gg----------
 		if err != nil {
 			log.Println("newReq - err = ", err)
 			_, _ = fmt.Fprintf(w, "%s", fmt.Sprintf(string(HTMLInfoMp["home"]), err))

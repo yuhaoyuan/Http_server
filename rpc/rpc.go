@@ -28,6 +28,18 @@ func GetSingleton() *corn.Client {
 	return specialRPCClient
 }
 
+// GetSingleton 获得rpcClient
+func GetNewClient() *corn.Client {
+	var specialRPCClient *corn.Client
+	conn, err := net.Dial("tcp", config.BaseConf.Addr)
+	if err != nil {
+		log.Printf("client-dial failed!, err = ", err)
+	}
+	log.Println("----------------make RpcClient------------------")
+	specialRPCClient = corn.NewClient(conn)
+	return specialRPCClient
+}
+
 // SpecialRPClientInit RpcClient 构造方法
 func SpecialRPClientInit() {
 	conn, err := net.Dial("tcp", config.BaseConf.Addr)

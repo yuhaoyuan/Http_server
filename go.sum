@@ -25,8 +25,8 @@ github.com/qiniu/x v7.0.8+incompatible/go.mod h1:KpRKWYG/GaidPQVpoQ2Cvuvtts3gYno
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
 github.com/stretchr/testify v1.5.1 h1:nOGnQDM7FYENwehXlg/kFVnos3rEvtKTjRvOWSzb6H4=
 github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
-github.com/yuhaoyuan/RPC_server v0.0.0-20200304161756-1cfa2810385b h1:HizO8WHeBhDuQw7xaEGwdTThtvuxK2HTWPXgB1QWggI=
-github.com/yuhaoyuan/RPC_server v0.0.0-20200304161756-1cfa2810385b/go.mod h1:uwKHnBpj5P6/xyypuRhB5WGHH6sLD/5YvwKOuPkpf0o=
+github.com/yuhaoyuan/RPC_server v0.0.0-20200305114037-db0eea2d1bd8 h1:Ea4nFROCW+XJPqXgmeK8ZUaITVjqXNOfaklbptVDWng=
+github.com/yuhaoyuan/RPC_server v0.0.0-20200305114037-db0eea2d1bd8/go.mod h1:uwKHnBpj5P6/xyypuRhB5WGHH6sLD/5YvwKOuPkpf0o=
 golang.org/x/net v0.0.0-20180906233101-161cd47e91fd h1:nTDtHvHSdCn1m6ITfMRqtOd/9+7a3s8RBNOZ3eYZzJA=
 golang.org/x/net v0.0.0-20180906233101-161cd47e91fd/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
 golang.org/x/sync v0.0.0-20180314180146-1d60e4601c6f h1:wMNYb4v58l5UBM7MYRLPG6ZhfOqbKu7X5eyFl8ZhKvA=
