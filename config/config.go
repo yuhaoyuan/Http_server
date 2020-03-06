@@ -9,7 +9,7 @@ type BaseConfig struct {
 	AccessKEY string
 	SecretKEY string
 	Bucket    string
-	CdnUrl string
+	CDNUrl string
 	LogName string
 }
 
@@ -25,6 +25,6 @@ func BaseConfInit() {
 	BaseConf.AccessKEY = "4w-q4XHzGx3eV_a1aMPog9hu44MLVpoLWrNv8rGH"
 	BaseConf.SecretKEY = "qAiFkbYFUEkiaIJjZawLvfaIp2K3P-CbpzcNLkKo"
 	BaseConf.Bucket = "yuhaoyuan"
-	BaseConf.CdnUrl = "http://q6gy4v9f7.bkt.clouddn.com/"
+	BaseConf.CDNUrl = "http://q6gy4v9f7.bkt.clouddn.com/"
 	BaseConf.LogName = "yhy_http_server_log.log"
 }

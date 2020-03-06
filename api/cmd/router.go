@@ -13,7 +13,7 @@ type Router struct {
 // ServeHTTP .
 func (t *Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	uPath := r.URL.Path
-	log.Println("url call - \n", uPath)
+	//log.Println("url call - \n", uPath)
 	switch uPath {
 	case "/":
 		t.Home(w, r)
@@ -42,10 +42,10 @@ func (t *Router) Home(w http.ResponseWriter, r *http.Request) {
 
 // Login .
 func (t *Router) Login(w http.ResponseWriter, r *http.Request) {
-	bT := time.Now()
+	//bT := time.Now()
 	HandLogin(w, r)
-	eT := time.Since(bT)
-	log.Println("func time log---------------api:login, time=\n\n", eT)
+	//eT := time.Since(bT)
+	//log.Println("func time log---------------api:login, time=\n\n", eT)
 }
 
 // Register .

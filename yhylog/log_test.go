@@ -5,5 +5,5 @@ import (
 )
 
 func TestLogInit(t *testing.T) {
-	LogInit("yhy_http_server_log")
+	LogInit("yhy_http_server_log.log")
 }

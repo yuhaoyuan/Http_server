@@ -28,7 +28,7 @@ func GetSingleton() *corn.Client {
 	return specialRPCClient
 }
 
-// GetSingleton 获得rpcClient
+// GetNewClient 获得rpcClient
 func GetNewClient() *corn.Client {
 	var specialRPCClient *corn.Client
 	conn, err := net.Dial("tcp", config.BaseConf.Addr)

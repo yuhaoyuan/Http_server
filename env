@@ -3,4 +3,4 @@ export ACCESSKEY=4w-q4XHzGx3eV_a1aMPog9hu44MLVpoLWrNv8rGH
 export SECRETKEY=qAiFkbYFUEkiaIJjZawLvfaIp2K3P-CbpzcNLkKo
 export BUCKET=yuhaoyuan
 export CDNURL=http://q6gy4v9f7.bkt.clouddn.com/
-export HSLOGNAME=yhy_http_server_log
+export HSLOGNAME=yhy_http_server_log.log

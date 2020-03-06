@@ -2,10 +2,10 @@ package util
 
 import (
 	"context"
-	"fmt"
 	"github.com/qiniu/api.v7/auth/qbox"
 	"github.com/qiniu/api.v7/storage"
 	"github.com/yuhaoyuan/Http_server/config"
+	"log"
 )
 
 // 七牛云CDN上传
@@ -36,8 +36,8 @@ func UploadQiniu(filePath, fileName string) string {
 	}
 	err := formUploader.PutFile(context.Background(), &ret, upToken, fileName, filePath, &putExtra)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return ""
 	}
-	return config.BaseConf.CdnUrl + fileName
+	return config.BaseConf.CDNUrl + fileName
 }
