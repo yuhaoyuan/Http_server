@@ -1,0 +1,11 @@
+2020/03/07 01:15:36 log.go:25: Server log ready!!!!!!!!!!!  time=2020-03-07 01:15:36.394901 +0800 CST m=+0.003089050
+2020/03/07 01:15:36 rpc.go:47: client-dial failed!, err = %!(EXTRA *net.OpError=dial tcp 127.0.0.1:8009: connect: connection refused)
+2020/03/07 01:15:36 rpc.go:49: ----------------make RpcClient------------------
+2020/03/07 01:15:47 log.go:25: Server log ready!!!!!!!!!!!  time=2020-03-07 01:15:47.947606 +0800 CST m=+0.001276354
+2020/03/07 01:15:47 rpc.go:49: ----------------make RpcClient------------------
+2020/03/07 01:15:57 router.go:40: func time log---------------api:home, time=
+
+ 24.301µs
+2020/03/07 01:16:02 router.go:72: func time log---------------api:modify, time=
+
+ 5.458988ms
