@@ -25,38 +25,30 @@ func BenchmarkGetUserInfo(b *testing.B) {
 	fmt.Println("userList count = ", len(userNameList))
 	apiUrl := "http://127.0.0.1:8001/login"
 	wg := &sync.WaitGroup{}
-	for i := 0; i < 1; i++ {    // 200 个client(协程)
+	bT := time.Now()
+	for i := 0; i < 2000; i++ {    // 200 个client(协程)
 		wg.Add(1)
 		if i>0 {
-			time.Sleep(time.Millisecond*100)
+			time.Sleep(time.Millisecond*10)
 		}
 		go func(th int) {
 			defer wg.Done()
 			data := url.Values{}
 			data.Set("user_pwd", "")
 			data.Set("token", "ckQSpDXWcJVTWfFidRkh")
-			L := len(userNameList)
-			rand.Seed(time.Now().UnixNano())
-			userName := userNameList[rand.Intn(L)]
-			//fmt.Println("user-name = ", userName)
-			data.Set("user_name", userName)
 
 			client := http.Client{} //创建客户端， 是放在for循环里面还是外面呢
-			//request 一定要放在for循环里面，可能是Do方法会关闭 req 中的 Body 读取，因此同一个 req 再次传参给 Do 时，Body 的读方法已经关闭
-			//request, err := http.NewRequest("POST", apiUrl, strings.NewReader(data.Encode()))
-			//if err != nil {
-			//	fmt.Printf("http.NewRequest%v", err)
-			//}
-			//request.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-			//request.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
-
-			for j:=0; j<1; j++ {    // 固定用户 发送1000次请求，一共20w的请求量，耗时可以在日志中看到
+			for j:=0; j<10; j++ {    // 固定用户 发送1000次请求，一共20w的请求量，耗时可以在日志中看到
 				// 为了分解瞬时压力，发一个请求睡一会儿把
 				time.Sleep(time.Millisecond*100)
+				L := len(userNameList)
+				rand.Seed(time.Now().UnixNano())
+				userName := userNameList[rand.Intn(L)]   // 随机用户
+				//fmt.Println("user-name = ", userName)
+				data.Set("user_name", userName)
 
-				bT := time.Now()
+
 				resp, err := client.Post(apiUrl, "application/x-www-form-urlencoded", strings.NewReader(data.Encode())) //发送请求
-				eT := time.Since(bT)
 
 				if err != nil || resp.Body == nil{
 					logStr := fmt.Sprintf("in %dth for---result=err----userName=%s----err=%s", th, userName, err)
@@ -72,10 +64,10 @@ func BenchmarkGetUserInfo(b *testing.B) {
 				}
 				result := strings.Contains(string(buffer.Bytes()), userName)
 				if result {
-					logStr := fmt.Sprintf("in %dth for---result=true----userName=%s----time=%s", th, userName, eT.String())
-					log.Println(logStr)
+					//logStr := fmt.Sprintf("in %dth for---result=true----userName=%s--", th, userName)
+					//log.Println(logStr)
 				} else {
-					logStr := fmt.Sprintf("in %dth for---result=false---userName=%s----respBytes=%s", th, userName, string(buffer.Bytes()))
+					logStr := fmt.Sprintf("in %dth for---result=false------------------------------", th,)
 					log.Println(logStr)
 				}
 				_ = resp.Body.Close()   ///
@@ -83,7 +75,8 @@ func BenchmarkGetUserInfo(b *testing.B) {
 		}(i)
 	}
 	wg.Wait()
-	log.Println("DONE!")
+	eT := time.Since(bT)
+	log.Println("DONE! all-time = ", eT.String())
 }
 
 func ASingleCall(){
